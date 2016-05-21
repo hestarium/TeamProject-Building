@@ -152,3 +152,26 @@ Space** createSpace(int cnt)
 
 	return sp_Return;
 }
+
+Space** addSpace(Room* rm)
+{
+	rm->space = (Space **)malloc(sizeof(Space *) * rm->space_cnt);
+	int i;
+	for(i = 0; i < rm->space_cnt; i++)
+		if(rm->space[i] == NULL)
+			rm->space[i] = (Space *)malloc(sizeof(Space));
+	
+	return rm->space;
+}
+
+Space** delSpace(Room* rm, int cnt)
+{
+	int i;
+	for(i = rm->space_cnt - 1; i >= rm->space_cnt - 1 - cnt; i--)
+		free(rm->space[i]);
+
+	rm->space_cnt -= cnt;
+	rm->space = (Space **)realloc(rm->space, sizeof(Space *) * rm->space_cnt);
+
+	return rm->space;
+}

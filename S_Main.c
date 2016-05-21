@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 	bld = InitBuilding(bld);
 	
 	int select_menu;
-	int floor_num, room_num;
+	int floor_num, room_num, space_num;
 	int k;
 
 	//BUILDING 0 / FLOOR 1 / ROOM 2 / SPACE 3 / QUIT -1
@@ -21,20 +21,31 @@ int main(int argc, char* argv[])
 				select_menu = bld_menu_selector();
 				switch(select_menu)
 				{
+					// FLOOR MENU
 					case 1:
 						flag = 1;
 						break;
+
+					// ROOM MENU
 					case 2: 
 						flag = 2;
 						break;
+
+					// SPACE MENU
 					case 3:
 						flag = 3;
 						break;
+
+					//PRINT BUILDING
 					case 4:
 						print_Building(bld);
 						break;
+
+					// TERMINATE FLAG
 					case -1:
 						break;
+	
+					// WRONG INPUT
 					default:
 						printf("Input Right Value!\n");
 						break;
@@ -49,7 +60,7 @@ int main(int argc, char* argv[])
 					// ADD FLOOR
 					case 1:
 						printf("┌─────────────────────────────────────┐\n");
-						printf("│[1] ADD FLOOR                        │\n");
+						printf("│[F1] ADD FLOOR                       │\n");
 						printf("│ Input Number to add Floors          │\n");
 						printf("└─────────────────────────────────────┘\n");
 						printf("=> ");
@@ -62,7 +73,7 @@ int main(int argc, char* argv[])
 					// DELETE FLOOR
 					case 2: 
 						printf("┌────────────────────────────────────────┐\n");
-						printf("│[2] DEL FLOOR                           │\n");
+						printf("│[F2] DEL FLOOR                          │\n");
 						printf("│ Input Number to delete Floors          │\n");
 						printf("└────────────────────────────────────────┘\n");
 						printf("=> ");
@@ -74,6 +85,8 @@ int main(int argc, char* argv[])
 					// PRINT FLOOR
 					case 3:
 						break;
+
+					// BACK TO BUILDING MENU
 					case 0:
 						flag = 0;
 						break;
@@ -93,7 +106,7 @@ int main(int argc, char* argv[])
 					// ADD ROOM
 					case 1:
 						printf("┌─────────────────────────────────────┐\n");
-						printf("│[1] ADD ROOM                         │\n");
+						printf("│[R1-1] ADD ROOM                      │\n");
 						printf("│ Input Floor Number to add Rooms     │\n");
 						printf("└─────────────────────────────────────┘\n");
 						printf("=> ");
@@ -102,16 +115,18 @@ int main(int argc, char* argv[])
 						floor_num--;
 						system("clear");
 						printf("┌─────────────────────────────────────┐\n");
-						printf("│ Input Number to add Rooms           │\n");
+						printf("│ [R1-2] Input Number to add Rooms    │\n");
 						printf("└─────────────────────────────────────┘\n");
 						printf("=> ");
 						scanf("%d", &room_num);
 						bld->floor[floor_num]->room_cnt += room_num;
 						bld->floor[floor_num]->room = addRoom(bld->floor[floor_num]);
 						break;
+
+					// DELETE ROOM
 					case 2: 
 						printf("┌────────────────────────────────────────┐\n");
-						printf("│[2] DEL ROOM                            │\n");
+						printf("│[R2-1] DEL ROOM                         │\n");
 						printf("│ Input Floor Number to delete Rooms     │\n");
 						printf("└────────────────────────────────────────┘\n");
 						printf("=> ");
@@ -121,7 +136,7 @@ int main(int argc, char* argv[])
 
 						system("clear");
 						printf("┌────────────────────────────────────────┐\n");
-						printf("│ Input Number to delete Rooms           │\n");
+						printf("│ [R2-2] Input Number to delete Rooms    │\n");
 						printf("└────────────────────────────────────────┘\n");
 						printf("=> ");
 						scanf("%d", &room_num);
@@ -130,9 +145,27 @@ int main(int argc, char* argv[])
 
 					// PRINT ROOM
 					case 3:
+						printf("test\n");
+						printf("┌────────────────────────────────────────┐\n");
+						printf("│[R2-1] DEL ROOM                         │\n");
+						printf("│ Input Floor Number to delete Rooms     │\n");
+						printf("└────────────────────────────────────────┘\n");
+						printf("=> ");
+
+						scanf("%d", &floor_num);
+						floor_num--;
+
+						system("clear");
+						printf("┌────────────────────────────────────────┐\n");
+						printf("│ [R2-2] Input Number to delete Rooms    │\n");
+						printf("└────────────────────────────────────────┘\n");
+						printf("=> ");
+						scanf("%d", &room_num);
+						room_num--;
+						print_space(bld->floor[floor_num]->room[room_num]);
 						break;
 
-					// BACK!
+					// BACK TO BUILDING MENU
 					case 0:
 						flag = 0;
 						break;
@@ -151,11 +184,66 @@ int main(int argc, char* argv[])
 				select_menu = sp_menu_selector();
 				switch(select_menu)
 				{
+					// ADD SPACE
 					case 1:
+						printf("┌───────────────────────────────────┐\n");
+						printf("│[S1-1] ADD SPACE                   │\n");
+						printf("│ Input Floor Number                │\n");
+						printf("└───────────────────────────────────┘\n");
+						printf("=> ");
+											
+						scanf("%d", &floor_num);
+						floor_num--;
+						system("clear");
+						printf("┌─────────────────────────────┐\n");
+						printf("│[S1-2] Input Room Number     │\n");
+						printf("└─────────────────────────────┘\n");
+						printf("=> ");
+						scanf("%d", &room_num);
+
+						system("clear");
+						printf("┌──────────────────────────────────┐\n");
+						printf("│[S1-3] Input Number to add Space  │\n");
+						printf("└──────────────────────────────────┘\n");
+						printf("=> ");
+						scanf("%d", &space_num);
+
+						bld->floor[floor_num]->room[room_num]->space_cnt += space_num;
+						bld->floor[floor_num]->room[room_num]->space = addSpace(bld->floor[floor_num]->room[room_num]);
 						break;
+
+					// DEL SPACE
 					case 2: 
+						printf("┌────────────────────────────────────────┐\n");
+						printf("│[S2-1] DEL SPACE                        │\n");
+						printf("│ Input Room Number                      │\n");
+						printf("└────────────────────────────────────────┘\n");
+						printf("=> ");
+
+						scanf("%d", &floor_num);
+						floor_num--;
+
+						system("clear");
+						printf("┌────────────────────────────────────────┐\n");
+						printf("│ [S2-2] Input Room Number               │\n");
+						printf("└────────────────────────────────────────┘\n");
+						printf("=> ");
+						scanf("%d", &room_num);
+						room_num--;						
+				
+						system("clear");
+						printf("┌────────────────────────────────────────┐\n");
+						printf("│ [S2-3] Input Space to delete Number    │\n");
+						printf("└────────────────────────────────────────┘\n");
+						printf("=> ");
+						scanf("%d", &space_num);
+						space_num--;
+
+						bld->floor[floor_num]->room[room_num]->space = delSpace(bld->floor[floor_num]->room[room_num], space_num);
+						
 						break;
 					case 3:
+						
 						break;
 					case 0:
 						flag = 0;
@@ -265,3 +353,74 @@ int sp_menu_selector()
 	scanf("%d", &input);
 	return input;
 }
+
+void print_space(Room* rm)
+{
+	printf("rm->space_cnt = %d\n", rm->space_cnt);
+	switch(rm->space_cnt)
+	{
+		case 0:
+			printf("┌───────────────────────┐\n");
+			printf("│                       │\n");
+			printf("│         EMPTY         │\n");
+			printf("│                       │\n");
+			printf("└───────────────────────┘\n");
+			break;
+
+		case 1:
+			printf("┌───────────────────────┐\n");
+			printf("│                       │\n");
+			printf("│          [1]          │\n");
+			printf("│                       │\n");
+			printf("└───────────────────────┘\n");
+			break;
+
+		case 2:
+			printf("┌───────────┬───────────┐\n");
+			printf("│           │           │\n");
+			printf("│    [1]    │    [2]    │\n");
+			printf("│           │           │\n");
+			printf("└───────────┴───────────┘\n");
+			break;
+
+		case 3:
+			printf("┌───────┬───────┬───────┐\n");
+			printf("│       │       │       │\n");
+			printf("│  [1]  │  [2]  │  [3]  │\n");
+			printf("│       │       │       │\n");
+			printf("└───────┴───────┴───────┘\n");
+			break;
+
+		case 4:
+			printf("┌───────────┬───────────┐\n");
+			printf("│    [1]    │    [2]    │\n");
+			printf("├───────────┼───────────┤\n");
+			printf("│    [3]    │    [4]    │\n");
+			printf("└───────────┴───────────┘\n");
+			break;
+	}
+}
+/*
+int* seperate_fl_rm(int room_num, int* arr_room_num)
+{
+	char* s_room_num = itoa(room_num);
+	int count, i;
+	
+	for(i = 0; i < strlen(s_room_num); i++)
+		if(s_room_num[i] == '0')
+			break;
+		else
+			count++;
+
+	if(count > 0)
+	{
+		
+	}
+
+	else
+	{
+	}
+
+	
+}
+*/
