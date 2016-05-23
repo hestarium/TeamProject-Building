@@ -145,7 +145,6 @@ int main(int argc, char* argv[])
 
 					// PRINT ROOM
 					case 3:
-						printf("test\n");
 						printf("┌────────────────────────────────────────┐\n");
 						printf("│[R2-1] DEL ROOM                         │\n");
 						printf("│ Input Floor Number to delete Rooms     │\n");
@@ -200,7 +199,7 @@ int main(int argc, char* argv[])
 						printf("└─────────────────────────────┘\n");
 						printf("=> ");
 						scanf("%d", &room_num);
-
+						room_num--;
 						system("clear");
 						printf("┌──────────────────────────────────┐\n");
 						printf("│[S1-3] Input Number to add Space  │\n");
@@ -210,6 +209,7 @@ int main(int argc, char* argv[])
 
 						bld->floor[floor_num]->room[room_num]->space_cnt += space_num;
 						bld->floor[floor_num]->room[room_num]->space = addSpace(bld->floor[floor_num]->room[room_num]);
+						printf("%d %p\n", bld->floor[floor_num]->room[room_num]->space_cnt, &bld->floor[floor_num]->room[room_num]->space_cnt);
 						break;
 
 					// DEL SPACE
@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
 
 						system("clear");
 						printf("┌────────────────────────────────────────┐\n");
-						printf("│ [S2-2] Input Room Number               │\n");
+						printf("│ [S2-2] Input Space Number              │\n");
 						printf("└────────────────────────────────────────┘\n");
 						printf("=> ");
 						scanf("%d", &room_num);
@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
 						
 						break;
 					case 3:
-						
+						print_space(bld->floor[0]->room[0]);	
 						break;
 					case 0:
 						flag = 0;
@@ -356,7 +356,7 @@ int sp_menu_selector()
 
 void print_space(Room* rm)
 {
-	printf("rm->space_cnt = %d\n", rm->space_cnt);
+	printf("rm->space_cnt = %d %p\n", rm->space_cnt, &rm->space_cnt);
 	switch(rm->space_cnt)
 	{
 		case 0:

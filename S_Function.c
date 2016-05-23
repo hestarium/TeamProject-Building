@@ -155,7 +155,7 @@ Space** createSpace(int cnt)
 
 Space** addSpace(Room* rm)
 {
-	rm->space = (Space **)malloc(sizeof(Space *) * rm->space_cnt);
+	rm->space = (Space **)realloc(rm->space,sizeof(Space *) * rm->space_cnt);
 	int i;
 	for(i = 0; i < rm->space_cnt; i++)
 		if(rm->space[i] == NULL)
