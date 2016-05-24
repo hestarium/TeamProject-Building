@@ -47,7 +47,7 @@ Room** delRoom(Floor* fl, int cnt);
 Space** createSpace(int cnt);
 Space** addSpace(Room* rm);
 Space** delSpace(Room* rm, int cnt);
-void print_space(Room* rm);
+void print_space(Room* rm, int floor_num, int room_num);
 //Space** printSpace(int cnt);
 
 

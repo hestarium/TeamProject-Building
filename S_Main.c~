@@ -407,7 +407,6 @@ int main(int argc, char* argv[])
 		free(bld->floor[i]);
 	}
 	free(bld);
-
 	return 0;
 }
 

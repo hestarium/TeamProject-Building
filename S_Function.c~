@@ -144,7 +144,6 @@ Space** createSpace(int cnt)
 	int i;
 	for(i = 0; i < cnt; i++)
 		sp_Return[i] = (Space *)malloc(sizeof(Space));
-
 	if(sp_Return == NULL)
 	{
 		printf("[Error][createSpace] - [MEMORY NOT ALLOCATED]\n");
