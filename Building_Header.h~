@@ -81,7 +81,7 @@ int trdMenu(int* price);
 
 int getfstPrice(int price, int menu);
 int getsndPrice(int price, int menu);
-int gettrdPrice(int price, int menu);
+int gettrdPrice(int* price, int menu);
 
 int* assign_a_room(Building* bld, int* room_info, int room_type);
 int check_room(Building* bld, int room_type);

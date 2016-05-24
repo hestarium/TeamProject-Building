@@ -6,21 +6,79 @@ int main(int argc, char* argv[])
 	bld = createBuilding();
 	bld = InitBuilding(bld);
 	
-	int select_menu;
+	int select_menu, room_select_menu;
 	int floor_num, room_num, space_num;
-	int i, j, k, temp;
+	int i, j, k, temp, price, t_flag;
+	int first_type, second_type, third_type;
+	int* room_info;
+	room_info = (int *)malloc(sizeof(int) * 2);
 
-	//BUILDING 0 / FLOOR 1 / ROOM 2 / SPACE 3 / QUIT -1
-	int flag = 0;
+	printf("Input your building's floor number and room number\n");
+	printf("floor number: ");
+	scanf("%d", &floor_num);
+	printf("room number: ");
+	scanf("%d", &room_num);
+
+	bld = setBuilding(bld, floor_num, room_num);
+
+	// USER -2 / BUILDING = ADMIN 0 / FLOOR 1 / ROOM 2 / SPACE 3 / QUIT -1
+
+	int flag = -2;
 	system("clear");
 	do
 	{
 		switch(flag)
 		{
+			case -2:
+				price = 0;
+				first_type = fstMenu();
+				if(first_type == 1 || first_type == 2)
+				{
+					price += getfstPrice(price, first_type);
+					second_type = sndMenu(bld);
+					if(1 <= second_type && second_type <= 3)
+					{
+						room_info = assign_a_room(bld, room_info, second_type);
+						price = getsndPrice(price, second_type);
+						third_type = trdMenu(&price);
+						
+						if(third_type == 0)
+						{
+							save_data(bld, room_info, price);
+							flag = -2;
+							break;
+						}
+
+						else if(third_type == -1)
+							select_menu = -1;
+
+						else
+							printf("[Error][trdMenu] - Wrong Value!\n"); 
+					}
+
+					else
+						printf("[Error][sndMenu] - Wrong Value! => %d\n", second_type);
+					
+				}
+
+				else if(first_type == 0)
+					flag = 0;
+
+				else if(first_type == -1)
+					flag = -1;
+			
+				else
+					printf("[Error][fstMenu] - Wrong Value!\n");
+				
+				break;
+				
 			case 0:
 				select_menu = bld_menu_selector();
 				switch(select_menu)
 				{
+					case -2:
+						flag = -2;
+						break;
 					// FLOOR MENU
 					case 1:
 						flag = 1;
@@ -414,7 +472,7 @@ int main(int argc, char* argv[])
 void print_Building(Building* bld)
 {
 	system("clear");
-	int i, j;
+	int i, j, k, count = 0;
 	for(i = bld->floor_cnt - 1; i >= 0; i--)
 	{
 		for(j = 0; j < bld->floor[i]->room_cnt; j++)
@@ -430,6 +488,21 @@ void print_Building(Building* bld)
 
 		printf("%2dF\n", i + 1);		
 	}	
+
+	printf("Room Number: %d\n", bld->floor_cnt * bld->floor[0]->room_cnt);
+
+	for(i = 0; i < bld->floor_cnt; i++)
+	{
+		for(j = 0; j < bld->floor[j]->room_cnt; j++)
+		{
+			for(k = 0; k < bld->floor[i]->room[j]->space_cnt; k++)
+			{
+				if(bld->floor[i]->room[j]->space[k]->host_name != NULL)
+					count++;
+			}
+		}
+	}
+	printf("Person Number: %d\n", count); 
 }
 
 int bld_menu_selector()
@@ -505,6 +578,8 @@ int sp_menu_selector()
 void print_space(Room* rm, int floor_num, int room_num)
 {
 	system("clear");
+	int i;
+	printf("---------Room Type : %d -----------\n", rm->room_type);
 	printf("---------Room Info : %d-%d---------\n", floor_num + 1, room_num + 1);
 	switch(rm->space_cnt)
 	{
@@ -514,6 +589,7 @@ void print_space(Room* rm, int floor_num, int room_num)
 			printf("│         EMPTY         │\n");
 			printf("│                       │\n");
 			printf("└───────────────────────┘\n");
+			
 			break;
 
 		case 1:
@@ -548,4 +624,7 @@ void print_space(Room* rm, int floor_num, int room_num)
 			printf("└───────────┴───────────┘\n");
 			break;
 	}
+
+	for(i = 0; i < rm->space_cnt; i++)
+		printf("[%d] name: %s\n", i, rm->space[i]->host_name);
 }
