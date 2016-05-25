@@ -130,6 +130,8 @@ int fstMenu()
 		printf("│              │\n");
 		printf("│  2. 숙박     │\n");
 		printf("│	       │\n");
+		printf("│  3. 정산     │\n");
+		printf("│	       │\n");		
 		printf("│  -1. QUIT    │\n");	
 		printf("│	       │\n");	
 		printf("└──────────────┘\n");
@@ -137,7 +139,7 @@ int fstMenu()
 		printf("input Sleep's menu\n");		
 		scanf("%d", &m_num);
 		
-		if(m_num < -1 && m_num > 2)
+		if(m_num < -1 && m_num > 3)
 		{
 			printf("Wrong Input Number!\n");
 			flag = -1;
@@ -174,6 +176,7 @@ int sndMenu(Building* bld){
 	{
 		do
 		{
+//			system("clear");
 			printf("┌───────────────┐\n");
 			printf("│	        │\n");
 			printf("│  1. Standard  │\n");
@@ -222,6 +225,7 @@ int trdMenu(int* price){
 	temp = (*price);
 	do
 	{
+//		system("clear");
 		printf("┌─────────────────────┐\n");
 		printf("│	       	      │\n");
 		printf("│  1. 칫솔            │\n");
@@ -232,7 +236,7 @@ int trdMenu(int* price){
 		printf("│  0. CONTINUE	      │\n");
 		printf("│ -1. QUIT	      │\n");
 		printf("└─────────────────────┘\n");
-
+		printf("Price = %d\n", temp);
 		printf(" 물품의 번호를 입력하세요");
 		scanf("%d" , &m_num);
 
@@ -244,7 +248,7 @@ int trdMenu(int* price){
 
 		else
 			printf("Input right value!\n");
-		printf("temp = %d\n", temp);
+//		printf("Price = %d\n", temp);
 
 	}while(flag != 0);
 	*price = temp;

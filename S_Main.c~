@@ -10,6 +10,7 @@ int main(int argc, char* argv[])
 	int floor_num, room_num, space_num;
 	int i, j, k, temp, price, t_flag;
 	int first_type, second_type, third_type;
+	int from, to, calc_result = 0;
 	int* room_info;
 	room_info = (int *)malloc(sizeof(int) * 2);
 
@@ -59,6 +60,12 @@ int main(int argc, char* argv[])
 					else
 						printf("[Error][sndMenu] - Wrong Value! => %d\n", second_type);
 					
+				}
+		
+				else if(first_type == 3)
+				{
+					calc_result = calculate(bld);
+					printf("Calculate Result = %d\n", calc_result);
 				}
 
 				else if(first_type == 0)
@@ -132,8 +139,8 @@ int main(int argc, char* argv[])
 							break;
 						}
 
-						bld->floor_cnt += temp;
-						bld->floor = addFloor(bld);
+						//bld->floor_cnt += temp;
+						bld->floor = addFloor(bld, temp);
 						system("clear");
 						printf("Complete to add floors! => FLOOR COUNT: %dF\n", bld->floor_cnt);
 						break;
@@ -214,8 +221,7 @@ int main(int argc, char* argv[])
 							break;
 						}
 
-						bld->floor[floor_num]->room_cnt += room_num;
-						bld->floor[floor_num]->room = addRoom(bld->floor[floor_num]);
+						bld->floor[floor_num]->room = addRoom(bld->floor[floor_num], room_num);
 						system("clear");
 						printf("Complete to add rooms at %dF! => Room Count = %d\n", floor_num + 1, bld->floor[floor_num]->room_cnt);
 						break;
@@ -428,7 +434,69 @@ int main(int argc, char* argv[])
 						system("clear");
 						printf("Complete to delete Space! => Space Count: %d\n", bld->floor[floor_num]->room[room_num]->space_cnt);
 						break;
+					
+					// CHANGE PERSON
+					case 3:
+						system("clear");
+						printf("┌───────────────────────────────────┐\n");
+						printf("│[S3-1] CHANGE PERSON               │\n");
+						printf("│ Input Floor Number                │\n");
+						printf("└───────────────────────────────────┘\n");
+						printf("=> ");
+											
+						scanf("%d", &floor_num);
+						floor_num--;
+						if(floor_num < 0 || bld->floor_cnt <= floor_num)
+						{
+							system("clear");
+							printf("Unavailable Floor Number! => Top Floor: %dF\n", bld->floor_cnt);
+							break;
+						} 
 
+						system("clear");
+						printf("┌───────────────────────────────────┐\n");
+						printf("│[S3-2] CHANGE PERSON   F: %3dF     │\n", floor_num + 1);
+						printf("│ Input Room Number                 │\n");
+						printf("└───────────────────────────────────┘\n");
+						printf("=> ");
+						scanf("%d", &room_num);
+						room_num--;
+
+						if(room_num < 0 || bld->floor[floor_num]->room_cnt <= room_num)
+						{
+							system("clear");
+							printf("Unavailable Room Number! => Room Count: %d\n", bld->floor[floor_num]->room_cnt);
+							break;
+						}
+
+						system("clear");
+						printf("┌───────────────────────────────────────────┐\n");
+						printf("│[S3-3] CHANGE PERSON  F: %3dF R: %3d       │\n", floor_num + 1, room_num + 1); 
+						printf("│ Input first space number to change person │\n");
+						printf("└───────────────────────────────────────────┘\n");
+						printf("\n------------- Room Info %d-%d -------------\n", floor_num + 1, room_num + 1);
+						for(i = 0; i < bld->floor[floor_num]->room[room_num]->space_cnt; i++)
+							printf("[%d] name = %s\n", i + 1, bld->floor[floor_num]->room[room_num]->space[i]->host_name);
+						printf("=> ");
+						scanf("%d", &from);
+						from--;
+
+						system("clear");
+						printf("┌───────────────────────────────────────────┐\n");
+						printf("│[S3-4] CHANGE PERSON  F: %3dF R: %3d P: %d  │\n", floor_num + 1, room_num + 1, from + 1); 
+						printf("│ Input second space number to change person│\n");
+						printf("└───────────────────────────────────────────┘\n");
+						printf("\n------------- Room Info %d-%d -------------\n", floor_num + 1, room_num + 1);
+						for(i = 0; i < bld->floor[floor_num]->room[room_num]->space_cnt; i++)
+							printf("[%d] name = %s\n", i + 1, bld->floor[floor_num]->room[room_num]->space[i]->host_name);
+						printf("=> ");
+						scanf("%d", &to);
+						to--;
+
+						change_name(bld->floor[floor_num]->room[room_num], from, to);
+						print_space(bld->floor[floor_num]->room[room_num], floor_num, room_num);
+					
+						break;
 					// BACK TO BUILDING MENU
 					case 0:
 						system("clear");
@@ -472,7 +540,7 @@ int main(int argc, char* argv[])
 void print_Building(Building* bld)
 {
 	system("clear");
-	int i, j;
+	int i, j, k, count = 0;
 	for(i = bld->floor_cnt - 1; i >= 0; i--)
 	{
 		for(j = 0; j < bld->floor[i]->room_cnt; j++)
@@ -488,6 +556,21 @@ void print_Building(Building* bld)
 
 		printf("%2dF\n", i + 1);		
 	}	
+
+	printf("Room Number: %d\n", bld->floor_cnt * bld->floor[0]->room_cnt);
+
+	for(i = 0; i < bld->floor_cnt; i++)
+	{
+		for(j = 0; j < bld->floor[i]->room_cnt; j++)
+		{
+			for(k = 0; k < bld->floor[i]->room[j]->space_cnt; k++)
+			{
+				if(bld->floor[i]->room[j]->space[k]->host_name != NULL)
+					count++;
+			}
+		}
+	}
+	printf("Person Number: %d\n", count); 
 }
 
 int bld_menu_selector()
@@ -550,6 +633,7 @@ int sp_menu_selector()
 	printf("│    MENU - SPACE     │\n");
 	printf("│  [1] ADD SPACE      │\n");
 	printf("│  [2] DELETE SPACE   │\n");
+	printf("│  [3] CHANGE Person  │\n");
 	printf("│  [0] BACK           │\n");
 	printf("│  [-1] Quit          │\n");
 	printf("└─────────────────────┘\n");
@@ -564,7 +648,25 @@ void print_space(Room* rm, int floor_num, int room_num)
 {
 	system("clear");
 	int i;
-	printf("---------Room Type : %d -----------\n", rm->room_type);
+	switch(rm->room_type)
+	{
+		case STANDARD_ROOM:
+			printf("---------Room Type : STARDARD -----------\n");
+			break;
+
+		case BUSINESS_ROOM:
+			printf("---------Room Type : BUSINESS -----------\n");
+			break;
+
+		case SWEET_ROOM:
+			printf("---------Room Type : SWEET -----------\n");
+			break;
+
+		default:
+			printf("[Error][print_space] - Wrong value at room_type => room_type : %d\n", rm->room_type);
+			break;
+	}
+	
 	printf("---------Room Info : %d-%d---------\n", floor_num + 1, room_num + 1);
 	switch(rm->space_cnt)
 	{
@@ -611,5 +713,8 @@ void print_space(Room* rm, int floor_num, int room_num)
 	}
 
 	for(i = 0; i < rm->space_cnt; i++)
-		printf("[%d] name: %s\n", i, rm->space[i]->host_name);
+		printf("[%d] name: %s\n", i + 1, rm->space[i]->host_name);
+	printf("[*] Electric Bill = %d\n", rm->electric_bill);
+	printf("[*] Water Bill = %d\n", rm->water_bill);
+	printf("[*] Price = %d\n", rm->price);
 }

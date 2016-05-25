@@ -123,8 +123,10 @@ Floor** createFloor(int cnt)
 
 	int i;
 	for(i = 0; i < cnt; i++)
+	{
 		fl_Return[i] = (Floor *)malloc(sizeof(Floor));
-	
+		memset(fl_Return[i], 0, sizeof(Floor));
+	}
 	if(fl_Return == NULL)
 	{
 		printf("[Error][createFloor] - [MEMORY NOT ALLOCATED\n");
@@ -134,32 +136,45 @@ Floor** createFloor(int cnt)
 	return fl_Return;
 }
 
-Floor** addFloor(Building* bld)
+Floor** addFloor(Building* bld, int cnt)
 {
-	bld->floor = (Floor **)realloc(bld->floor, sizeof(Floor *) * bld->floor_cnt);
 	int i;
-	for(i = 0; i < bld->floor_cnt; i++)
-	{
-		if(bld->floor[i] == NULL)
-		{
-			bld->floor[i] = (Floor *)malloc(sizeof(Floor));
-			bld->floor[i]->room_cnt = 1;
-			bld->floor[i]->room = createRoom(bld->floor[i]->room_cnt);		
-		}
-	}
 
+	bld->floor_cnt += cnt;
+	bld->floor = (Floor **)realloc(bld->floor, sizeof(Floor *) * bld->floor_cnt);
+	
+	for(i = bld->floor_cnt - cnt; i < bld->floor_cnt; i++)
+	{
+		bld->floor[i] = (Floor *)malloc(sizeof(Floor));
+		memset(bld->floor[i], 0, sizeof(Floor));
+		bld->floor[i]->room_cnt = 1;
+		bld->floor[i]->room = createRoom(bld->floor[i]->room_cnt);
+	}
+	
 	return bld->floor;
 }
 
 Floor** delFloor(Building* bld, int cnt)
 {
-	int i;
+	int i, j ,k;
 	for(i = bld->floor_cnt - 1; i > bld->floor_cnt-1-cnt; i--)
+	{
+		for(j = 0; j < bld->floor[i]->room_cnt; j++)
+		{
+			for(k = 0; k < bld->floor[i]->room[j]->space_cnt; k++)
+			{
+				if(bld->floor[i]->room[j]->space[k] != NULL)
+					free(bld->floor[i]->room[j]->space[k]->host_name);
+			}
+			free(bld->floor[i]->room[j]->space);
+			free(bld->floor[i]->room[j]);
+		}
 		free(bld->floor[i]);
+	}
 
 	bld->floor_cnt -= cnt;
 	bld->floor = (Floor **)realloc(bld->floor, sizeof(Floor *) * bld->floor_cnt);
-	
+
 	return bld->floor;
 }
 
@@ -174,7 +189,10 @@ Room** createRoom(int cnt)
 	
 	int i;
 	for(i = 0; i < cnt; i++)
+	{
 		rm_Return[i] = (Room *)malloc(sizeof(Room));
+		memset(rm_Return[i], 0, sizeof(Room));
+	}
 
 	if(rm_Return == NULL)
 	{
@@ -185,18 +203,17 @@ Room** createRoom(int cnt)
 	return rm_Return;
 }
 
-Room** addRoom(Floor* fl)
+Room** addRoom(Floor* fl, int cnt)
 {
+	fl->room_cnt += cnt;
 	fl->room = (Room **)realloc(fl->room, sizeof(Room *) * fl->room_cnt);
 	int i;
-	for(i = 0; i < fl->room_cnt; i++)
+	for(i = fl->room_cnt - cnt; i < fl->room_cnt; i++)
 	{
-		if(fl->room[i] == NULL)
-		{
-			fl->room[i] = (Room *)malloc(sizeof(Room));
-			fl->room[i]->space_cnt = 1;
-			fl->room[i]->space = createSpace(fl->room[i]->space_cnt);
-		}
+		fl->room[i] = (Room *)malloc(sizeof(Room));
+		memset(fl->room[i], 0, sizeof(Room));
+		fl->room[i]->space_cnt = 1;
+		fl->room[i]->space = createSpace(fl->room[i]->space_cnt);
 	}
 
 	return fl->room;
@@ -205,9 +222,17 @@ Room** addRoom(Floor* fl)
 
 Room** delRoom(Floor* fl, int cnt)
 {
-	int i;
+	int i, j;
+
 	for(i = fl->room_cnt - 1; i > fl->room_cnt - 1 - cnt; i--)
+	{
+		for(j = 0; j < fl->room[i]->space_cnt; j++)
+		{
+			free(fl->room[i]->space[j]->host_name);
+		}
+		free(fl->room[i]->space);
 		free(fl->room[i]);
+	}
 
 	fl->room_cnt -= cnt;
 	fl->room = (Room **)realloc(fl->room, sizeof(Room *) * fl->room_cnt);
@@ -225,7 +250,10 @@ Space** createSpace(int cnt)
 
 	int i;
 	for(i = 0; i < cnt; i++)
+	{
 		sp_Return[i] = (Space *)malloc(sizeof(Space));
+		sp_Return[i]->host_name = NULL;
+	}
 
 	if(sp_Return == NULL)
 	{
@@ -243,8 +271,10 @@ Space** addSpace(Room* rm)
 	for(i = 0; i < rm->space_cnt; i++)
 	{
 		if(rm->space[i] == NULL)
+		{
 			rm->space[i] = (Space *)malloc(sizeof(Space));
-			
+			rm->space[i]->host_name = NULL;
+		}	
 	}
 	return rm->space;
 }
@@ -253,8 +283,10 @@ Space** delSpace(Room* rm, int cnt)
 {
 	int i;
 	for(i = rm->space_cnt - 1; i > rm->space_cnt - 1 - cnt; i--)
+	{
+		free(rm->space[i]->host_name);
 		free(rm->space[i]);
-
+	}
 	rm->space_cnt -= cnt;
 	rm->space = (Space **)realloc(rm->space, sizeof(Space *) * rm->space_cnt);
 
@@ -264,9 +296,9 @@ Space** delSpace(Room* rm, int cnt)
 void change_name(Room* rm, int from, int to)
 {
 	char* temp = (char *)malloc(sizeof(char));
-	strcpy(temp, rm->space[to]);
-	strcpy(rm->space[to], rm->space[from]);
-	strcpy(rm->space[from], temp);
+	strcpy(temp, rm->space[to]->host_name);
+	strcpy(rm->space[to]->host_name, rm->space[from]->host_name);
+	strcpy(rm->space[from]->host_name, temp);
 }
 
 int* assign_a_room(Building* bld, int* room_info, int room_type)
@@ -280,7 +312,6 @@ int* assign_a_room(Building* bld, int* room_info, int room_type)
 		{
 			if(bld->floor[i]->room[j]->room_type == room_type && bld->floor[i]->room[j]->flag == 0)
 			{
-				printf("bld->floor[%d]->room[%d]->room_type = %d\n", i, j, bld->floor[i]->room[j]->room_type);
 				room_info[0] = i;
 				room_info[1] = j;
 				return room_info;			
@@ -329,56 +360,56 @@ int check_room(Building* bld, int room_type)
 
 void save_data(Building* bld, int* room_info, int price)
 {
-	printf("floor num = %d\n", room_info[0]);
-	printf("room num = %d\n", room_info[1]);
-	print_space(bld->floor[room_info[0]]->room[room_info[1]], room_info[0], room_info[1]);
+	
 	bld->floor[room_info[0]]->room[room_info[1]]->price = price;
 	bld->floor[room_info[0]]->room[room_info[1]]->electric_bill = getElePrice();
 	bld->floor[room_info[0]]->room[room_info[1]]->water_bill = getWaterPrice();
 
-	printf("price = %d\n",bld->floor[room_info[0]]->room[room_info[1]]->price);
-	printf("electric bill = %d\n", bld->floor[room_info[0]]->room[room_info[1]]->electric_bill);
-	printf("water bill = %d\n",bld->floor[room_info[0]]->room[room_info[1]]->water_bill);
-
 	int i;
-	printf("bld->floor[%d]->room[%d]->space_cnt = %d\n", room_info[0], room_info[1], bld->floor[room_info[0]]->room[room_info[1]]->space_cnt);
 	for(i = 0; i < bld->floor[room_info[0]]->room[room_info[1]]->space_cnt; i++)
 	{
 		if(bld->floor[room_info[0]]->room[room_info[1]]->space[i]->host_name == NULL)
+		{
 			bld->floor[room_info[0]]->room[room_info[1]]->space[i]->host_name = (char *)malloc(sizeof(char));
+			strcpy(bld->floor[room_info[0]]->room[room_info[1]]->space[i]->host_name, "NONE");		
+		}	
 	}
 
+	print_space(bld->floor[room_info[0]]->room[room_info[1]], room_info[0], room_info[1]);
 	for(i = 0; i < bld->floor[room_info[0]]->room[room_info[1]]->space_cnt; i++)
 	{
-		printf("Input a person name %d\n", i + 1);
+		printf("Input a person name %d to stay at %d-%d room\n", i + 1, room_info[0] + 1, room_info[1] + 1);
 		printf("=> ");
 		scanf("%s", bld->floor[room_info[0]]->room[room_info[1]]->space[i]->host_name);
 	}
 	
-	for(i = 0; i < bld->floor[room_info[0]]->room[room_info[1]]->space_cnt; i++)
-	{
-		printf("bld->floor[%d]->room[%d]->space[%d]->host_name = %s\n", room_info[0], room_info[1], i, bld->floor[room_info[0]]->room[room_info[1]]->space[i]->host_name);
-	}	
-
 	bld->floor[room_info[0]]->room[room_info[1]]->flag = 1;
-	
+	print_space(bld->floor[room_info[0]]->room[room_info[1]], room_info[0], room_info[1]);
 }
 
 int calculate(Building* bld)
 {
-	int i, j, k, result;
+	int i, j, k, result = 0;
 	for(i = 0; i < bld->floor_cnt; i++)
 	{
 		for(j = 0; j < bld->floor[i]->room_cnt; j++)
 		{
-			for(k = 0; k < bld->floor[i]->room[j]->space_cnt; k++)
+			if(bld->floor[i]->room[j]->flag == 1)
 			{
-				if(bld->floor[i]->room[j]->space[k]->flag == 1)
+				result += bld->floor[i]->room[j]->price;
+				result -= bld->floor[i]->room[j]->electric_bill;
+				result -= bld->floor[i]->room[j]->water_bill;
+				
+				bld->floor[i]->room[j]->flag = 0;
+				bld->floor[i]->room[j]->electric_bill = 0;
+				bld->floor[i]->room[j]->water_bill = 0;
+				bld->floor[i]->room[j]->price = 0;
+
+				for(k = 0; k < bld->floor[i]->room[j]->space_cnt; k++)
 				{
-					result += bld->floor[i]->room[j]->space[k]->price;
-					result += bld->floor[i]->room[j]->space[k]->electric_bill;
-					result += bld->floor[i]->room[j]->space[k]->water_bill;
-				}
+						free(bld->floor[i]->room[j]->space[k]->host_name);
+						bld->floor[i]->room[j]->space[k]->host_name = NULL;
+				}			
 			}
 		}
 	}

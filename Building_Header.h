@@ -51,17 +51,18 @@ Building* InitBuilding(Building* bld);
 Building* setBuilding(Building* bld, int floor_num, int room_num);
 
 Floor** createFloor(int cnt);
-Floor** addFloor(Building* bld);
+Floor** addFloor(Building* bld, int cnt);
 Floor** delFloor(Building* bld, int cnt);
 
 Room** createRoom(int cnt);
-Room** addRoom(Floor* fl);
+Room** addRoom(Floor* fl, int cnt);
 Room** delRoom(Floor* fl, int cnt);
 
 Space** createSpace(int cnt);
 Space** addSpace(Room* rm);
 Space** delSpace(Room* rm, int cnt);
 void print_space(Room* rm, int floor_num, int room_num);
+void change_name(Room* rm, int from, int to);
 
 
 // ADDED FUNCTION
@@ -86,6 +87,7 @@ int gettrdPrice(int price, int menu);
 int* assign_a_room(Building* bld, int* room_info, int room_type);
 int check_room(Building* bld, int room_type);
 void save_data(Building* bld, int* room_info, int price);
+int calculate(Building* bld);
 //void checkTime(time_t startTime, time_t endTime);
 //void getMinus(int* price);
 
